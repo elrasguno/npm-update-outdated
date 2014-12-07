@@ -6,10 +6,12 @@ function NPMUdateOutdated()
 {
     this.modules = {};
     this.outdated = {};
+    this.format = 'parseable';
     this.update_to = 'wanted';
     this.auto_update = false;
     this.args = [];
 
+    _parseParseableInput = _parseParseableInput.bind(this);
     _parseArgs = _parseArgs.bind(this);
 }
 
@@ -18,14 +20,12 @@ util.inherits(NPMUdateOutdated, events.EventEmitter);
 NPMUdateOutdated.prototype.Load = function(mods)
 {
     try {
-        this.modules = JSON.parse(mods);
+        this.modules = _parseParseableInput(mods);
         _parseArgs();
     } catch (e) {
-        throw new Error('Failed to parse input data: ' + e);
+        throw new Error('Failed to parse input data: ' + e.stack);
     }
 };
-
-
 
 NPMUdateOutdated.prototype.Length = function()
 {
@@ -151,7 +151,43 @@ NPMUdateOutdated.prototype.UpdateOutdated = function(mods, options)
 
 /*********************************************************/
 /* private methods
-/*********************************************************/
+
+/**
+ * Parse this.parseableInput i.e. the format produced by running "npm outdated --parseable"
+ * e.g. 
+ * /usr/local/lib/node_modules/istanbul/node_modules/escodegen:escodegen@1.3.3:escodegen@1.3.2:escodegen@1.4.1
+ *
+ *
+ */
+function _parseParseableInput(input, isGlobal)
+{
+    var lines = input.split("\n"),
+        mods = {},
+        mod,
+        modStr,
+        split,
+        splitVersions,
+        global = isGlobal || false;
+    
+    lines.forEach(function(line)
+    {
+        if (line.length)
+        {
+            modStr = line.split(process.cwd() + '/node_modules/').pop();
+            // This version only supports modules in the top-level node_modules
+            // directory, and not sub modules
+            console.log('modStr', modStr);
+            if (modStr.indexOf('node_modules') === -1)
+            {
+                mod = new Version().SetFromParseableString(modStr);
+                mods[mod.name] = mod;
+            }
+        }
+    });
+
+    return mods;
+}
+
 function _parseArgs ()
 {
     var len, i;
@@ -193,48 +229,82 @@ function _printHelp()
 
 function Version()
 {
-    this.major = 0;
-    this.minor = 0;
-    this.patch = 0;
+    this.name    = null;
+    this.location = null;
+    this.wanted  = 0;
+    this.current = 0;
+    this.latest  = 0;
+
+    //return this;
 }
+
+Version.prototype.SetFromParseableString = function(str)
+{
+    var split;
+
+    if (str && str.length > 0 && str.indexOf(':') !== -1)
+    {
+        split = str.split(':');
+
+        this.SetName(split[0])
+            .SetLocation('node_modules/' + split[0])
+            .SetWanted(split[1].split('@').pop())
+            .SetCurrent(split[2].split('@').pop())
+            .SetLatest(split[3].split('@').pop());
+    }
+    
+    return this;
+};
 
 Version.prototype.SetFromObject = function(mod)
 {
 
 };
 
-Version.prototype.SetMajor = function(v)
+Version.prototype.SetName = function(v)
 {
-    if (!IsNaN(v))
+    this.name = v;
+    return this;
+};
+
+Version.prototype.SetLocation = function(v)
+{
+    this.location = v;
+    return this;
+};
+
+Version.prototype.SetWanted = function(v)
+{
+    if (!isNaN(v))
     {
-        throw new Error('SetMajor expects a number');
+        throw new Error('SetWanted expects a number');
     }
 
-    this.major = v;
+    this.wanted = v;
 
     return this;
 };
 
-Version.prototype.SetMinor = function(v)
+Version.prototype.SetCurrent = function(v)
 {
-    if (!IsNaN(v))
+    if (!isNaN(v))
     {
-        throw new Error('SetMinor expects a number');
+        throw new Error('SetCurrent expects a number');
     }
 
-    this.minor = v;
+    this.current = v;
 
     return this;
 };
 
-Version.prototype.SetPatch = function(v)
+Version.prototype.SetLatest = function(v)
 {
-    if (!IsNaN(v))
+    if (!isNaN(v))
     {
-        throw new Error('SetPatch expects a number');
+        throw new Error('SetLatest expects a number');
     }
 
-    this.patch = v;
+    this.latest = v;
 
     return this;
 };
