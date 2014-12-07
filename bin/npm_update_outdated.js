@@ -14,7 +14,7 @@ process.stdin.on('end', function() {
     main(data);
 });
 
-var NPMUdateOutdated = require('./NPMUpdateOutdated.js');
+var NPMUdateOutdated = require('../lib/NPMUpdateOutdated.js');
 
 function main(data)
 {

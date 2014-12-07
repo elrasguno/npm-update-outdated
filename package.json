@@ -1,0 +1,27 @@
+{
+  "name": "npm-update-outdated",
+  "version": "0.1.0",
+  "description": "Module for updating outdated NPM modules based on semver specs.",
+  "main": "lib/NPMUpdateOutdated.js",
+  "preferGlobal" : "true",
+  "bin" : {
+      "npm-update-outdated" : "bin/npm_update_outdated.js"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "NPM",
+    "updated",
+    "outdated"
+  ],
+  "author": "Dan Racanelli <dracanelli+npm@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^2.5.0",
+    "when": "^3.6.3"
+  }
+}
