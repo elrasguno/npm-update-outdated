@@ -1,6 +1,15 @@
+'use strict';
+
 var exec = require('child_process').exec,
     events = require('events'),
-    util = require('util');
+    util = require('util'),
+    commander = require('commander'),
+    when = require('when'),
+    seq = require('when/sequence'),
+    nodefn = require('when/node'),
+    pExec = nodefn.lift(exec),
+    pkg = require('../package.json');
+
 
 function NPMUdateOutdated() 
 {
@@ -11,6 +20,7 @@ function NPMUdateOutdated()
     this.auto_update = false;
     this.args = [];
 
+    // Private, but bound, methods
     _parseParseableInput = _parseParseableInput.bind(this);
     _parseArgs = _parseArgs.bind(this);
 }
@@ -25,11 +35,6 @@ NPMUdateOutdated.prototype.Load = function(mods)
     } catch (e) {
         throw new Error('Failed to parse input data: ' + e.stack);
     }
-};
-
-NPMUdateOutdated.prototype.Length = function()
-{
-    return Object.keys(this.modules).length;
 };
 
 NPMUdateOutdated.prototype.GetOutdated = function(filter, options)
@@ -97,7 +102,9 @@ NPMUdateOutdated.prototype.UpdateOutdated = function(mods, options)
     var that = this,
         current, wanted, latest,
         complete = 0, total = 0,
-        modsLen;
+        mod,
+        modsLen,
+        pChain = [];
 
     if (!mods || mods.constructor !== Object )
     {
@@ -113,40 +120,43 @@ NPMUdateOutdated.prototype.UpdateOutdated = function(mods, options)
 
     total = modsLen;
 
-    for (mod in mods)
+    function _updateModules(mods)
     {
-        if (!mods[mod].current)
+        var pChain = when(function() { return mods; });
+        for (mod in mods)
         {
-            // Decrement total; These are the "MISSING" modules.
-            total--;
-        }
-        else
-        {
-            current = mod + '@' + mods[mod].current;
-            wanted = mod + '@' + mods[mod].wanted;
-            process.stdout.write('Updating from ' + current + ' to ' + wanted + ' ... ');
-            exec('npm update ' + mod, function(error, stdout, stderr)
+            if (!mods[mod].current)
             {
-                if (!error)
-                {
-                    console.log('OK!');
-                }
-                else
-                {
-                    console.error('OH NOES!');
-                    console.error(stderr);
-                }
+                // Decrement total; These are the "MISSING" modules.
+                total--;
+            }
+            else
+            {
+                current = mod + '@' + mods[mod].current;
+                wanted = mod + '@' + mods[mod].wanted;
 
-                complete++;
-
-                if (complete === total)
+                pChain = pChain.then(function(arg)
                 {
-                    console.log('# All done!');
-                    that.emit('end');
-                }
-            });
+                    return _updateModule(mods[arg]);
+                }.bind(null, mod));
+            }
         }
+
+        return pChain;
     }
+
+    _updateModules(mods) 
+    .then(function(resp)
+    {
+        console.log('All done!');
+        that.emit('end', resp);
+    })
+    .catch(function(err)
+    {
+        console.error(err);
+        that.emit('error', err);
+    });
+
 };
 
 /*********************************************************/
@@ -176,7 +186,6 @@ function _parseParseableInput(input, isGlobal)
             modStr = line.split(process.cwd() + '/node_modules/').pop();
             // This version only supports modules in the top-level node_modules
             // directory, and not sub modules
-            console.log('modStr', modStr);
             if (modStr.indexOf('node_modules') === -1)
             {
                 mod = new Version().SetFromParseableString(modStr);
@@ -219,11 +228,37 @@ function _parseArgs ()
 
 function _printHelp()
 {
-    console.log('########################################################');
-    console.log('# HELP!');
-    console.log('########################################################');
+    console.log('/~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\\');
+    console.log('| npm-update-outdated (v0.1.0)                           |');
+    console.log('|                                                        |');
+    console.log('| Usage: npm-update-outdated [options]                   |');
+    console.log('\\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~/');
     process.exit(0);
 }
+
+function _updateModule (mod)
+{
+    var deferred = when.defer();
+    // TODO: Account for "--latest" argument being passed.
+    process.stdout.write('Updating ' + mod.name + ' from ' + mod.current + ' to ' + mod.wanted + ' ... ');
+    pExec('npm update ' + mod.name)
+    .then(function() 
+    { 
+        console.log('OK!');
+        deferred.resolve(true);
+    })
+    .catch(function(err)
+    {
+        console.error('OH NOES!');
+        console.error(err);
+
+        deferred.reject(err);
+    });
+
+    return deferred.promise;
+}
+
+
 /*********************************************************/
 
 
@@ -254,11 +289,6 @@ Version.prototype.SetFromParseableString = function(str)
     }
     
     return this;
-};
-
-Version.prototype.SetFromObject = function(mod)
-{
-
 };
 
 Version.prototype.SetName = function(v)
