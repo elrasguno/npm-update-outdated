@@ -20,9 +20,17 @@ function main(data)
 {
     var updater = new NPMUdateOutdated();
     updater.Load(data);
+
     var outdated = updater.GetOutdated();
-    console.log('outdated', outdated);
+
     updater.UpdateOutdated(outdated);
-    //console.log('outdated', updater.GetOutdated('bars$'));
-    process.exit(0);
+
+    updater.on('end', function()
+    {
+        process.exit(0);
+    })
+    .on('error', function(err)
+    {
+        process.exit(1);
+    });
 }
