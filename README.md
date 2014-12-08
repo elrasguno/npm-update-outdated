@@ -1,6 +1,6 @@
 # npm-update-outdated
 
-If you're ever thinking that the [npm outdated] command should have an _--all_ option, then this is the module for you.
+If you're ever thinking that the [npm update](https://www.npmjs.org/doc/cli/npm-update.html) command should have an _--all_ option, then this is the module for you.
 
 ## Installation
 
@@ -20,7 +20,7 @@ $ npm-update-outdated [options]
 ```bash
 $ npm-update-outdated --help
 
-  Usage: npm_update_outdated [options]
+  Usage: npm-update-outdated [options]
 
   Options:
 
