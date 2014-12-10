@@ -1,6 +1,7 @@
 # npm-update-outdated
 
 If you're ever thinking that the [npm update](https://www.npmjs.org/doc/cli/npm-update.html) command should have an _--all_ option, then this is the module for you.
+By default, `npm-update-outdated` will update each of your project's node dependencies to the _wanted_ version shown by the `npm outdated` command.
 
 ## Installation
 

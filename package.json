@@ -1,11 +1,11 @@
 {
   "name": "npm-update-outdated",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Module for updating outdated NPM modules based on semver specs.",
   "main": "lib/NPMUpdateOutdated.js",
-  "preferGlobal" : "true",
-  "bin" : {
-      "npm-update-outdated" : "bin/npm-update-outdated.js"
+  "preferGlobal": "true",
+  "bin": {
+    "npm-update-outdated": "bin/npm-update-outdated.js"
   },
   "directories": {
     "test": "test"
@@ -19,15 +19,19 @@
     "update",
     "npm-update"
   ],
-  "repository" : { 
-    "type" : "git" , 
-    "url" : "http://github.com/elrasguno/npm-update-outdated.git"
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/elrasguno/npm-update-outdated.git"
   },
-  "bugs" : "https://github.com/elrasguno/npm-update-outdated.git/issues",
+  "bugs": "https://github.com/elrasguno/npm-update-outdated.git/issues",
   "author": "Dan Racanelli <dracanelli+npm@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "commander": "^2.5.0",
     "when": "^3.6.3"
+  },
+  "devDependencies": {
+    "mocha": "^2.0.1",
+    "surely": "^0.1.3"
   }
 }
