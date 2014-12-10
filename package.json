@@ -1,6 +1,6 @@
 {
   "name": "npm-update-outdated",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Module for updating outdated NPM modules based on semver specs.",
   "main": "lib/NPMUpdateOutdated.js",
   "preferGlobal": "true",
@@ -11,7 +11,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha"
   },
   "keywords": [
     "updated",

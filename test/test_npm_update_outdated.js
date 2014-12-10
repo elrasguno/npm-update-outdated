@@ -13,6 +13,7 @@ describe('Update Outdated Modules', function()
     {
         it('should install outdated module', function(done)
         {
+            this.timeout(5000);
             var version = 'surely@0.1.2';
             pExec('npm install ' + version)
             .then(function(resp)
@@ -41,6 +42,7 @@ describe('Update Outdated Modules', function()
     {
         it('should update to surely@wanted', function(done)
         {
+            this.timeout(5000);
             pExec('./bin/npm-update-outdated.js')
             .then(function(resp)
             {
@@ -54,6 +56,7 @@ describe('Update Outdated Modules', function()
     {
         it('should be update to the latest surely@0.1.x version', function(done)
         {
+            this.timeout(5000);
             var latest;
             pExec('npm info surely versions')
             .then(function(resp)
