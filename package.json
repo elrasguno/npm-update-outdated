@@ -28,7 +28,7 @@
   "license": "MIT",
   "dependencies": {
     "commander": "^2.5.0",
-    "when": "^3.6.3"
+    "when": "^3.6.4"
   },
   "devDependencies": {
     "mocha": "^2.0.1",
