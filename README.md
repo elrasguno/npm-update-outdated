@@ -2,7 +2,8 @@
 
 [![build status](https://travis-ci.org/elrasguno/npm-update-outdated.svg)](https://travis-ci.org/elrasguno/npm-update-outdated) [![npm version](https://badge.fury.io/js/npm-update-outdated.svg)](http://badge.fury.io/js/npm-update-outdated)
  
-If you're ever thinking that the [npm update](https://www.npmjs.org/doc/cli/npm-update.html) command should have an _--all_ option, then this is the module for you.
+This module thinly wraps the [npm update](https://www.npmjs.org/doc/cli/npm-update.html) command with a _--filter_ option in order to update modules matching a string or regex pattern.
+
 By default, `npm-update-outdated` will update each of your project's node dependencies to the _wanted_ version shown by the `npm outdated` command.
 
 ## Installation
