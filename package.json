@@ -1,6 +1,6 @@
 {
   "name": "npm-update-outdated",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Module for updating outdated NPM modules based on semver specs.",
   "main": "lib/NPMUpdateOutdated.js",
   "preferGlobal": "true",
