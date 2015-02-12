@@ -16,6 +16,10 @@ commander.version(pkg.version)
     .option('--filter <string|regex>', 'filter packages to be updated by string or regex', updater.SetFilter.bind(updater))
     //.option('-y', 'disable confirmation prompts and auto-update modules', updater.SetAutoUpdate.bind(updater, true))
     .option('--missing', 'install missing modules', updater.SetInstallMissing.bind(updater, true))
+    .option('--save', 'pass thru --save option to npm command', updater.SetSaveOption.bind(updater, '--save'))
+    .option('--save-dev', 'pass thru --save-dev option to npm command', updater.SetSaveOption.bind(updater, '--save-dev'))
+    .option('--save-optional', 'pass thru --save-optional option to npm command', updater.SetSaveOption.bind(updater, '--save-optional'))
+    .option('--save-exact', 'pass thru --save-exact option to npm command', updater.SetSaveOption.bind(updater, '--save-exact'))
     .usage('[options]')
     .parse(process.argv);
 
