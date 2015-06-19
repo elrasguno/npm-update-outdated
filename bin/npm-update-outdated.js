@@ -20,6 +20,7 @@ commander.version(pkg.version)
     .option('--save-dev', 'pass thru --save-dev option to npm command', updater.SetSaveOption.bind(updater, '--save-dev'))
     .option('--save-optional', 'pass thru --save-optional option to npm command', updater.SetSaveOption.bind(updater, '--save-optional'))
     .option('--save-exact', 'pass thru --save-exact option to npm command', updater.SetSaveOption.bind(updater, '--save-exact'))
+    .option('--check-only', 'output list of outdated top-level modules')
     .usage('[options]')
     .parse(process.argv);
 
@@ -34,11 +35,20 @@ pExec('npm outdated --parseable')
 
 function main(data)
 {
+	var outdated,
+		success;
     if (data && data.length)
     {
-        updater.Load(data[0]);
 
-        var outdated = updater.GetOutdated();
+        updater.Load(data[0]);
+        outdated = updater.GetOutdated();
+
+		if (commander.checkOnly)
+		{
+			success = updater.CheckOutdated(outdated);
+			process.exit(success);
+		}
+
 
         updater.UpdateOutdated(outdated);
 

@@ -28,17 +28,21 @@ $ npm-update-outdated --help
 
   Options:
 
-    -h, --help               output usage information
+	-h, --help               output usage information
     -V, --version            output the version number
     --filter <string|regex>  filter packages to be updated by string or regex
     --missing                install missing modules
+    --save                   pass thru --save option to npm command
+    --save-dev               pass thru --save-dev option to npm command
+    --save-optional          pass thru --save-optional option to npm command
+    --save-exact             pass thru --save-exact option to npm command
+    --check-only             output list of outdated top-level modules
 ```
 
 ## TODO
 
 Upcoming features include the following:
  * Update modules to the "latest" version as specified by `npm outdated`; This will include per module confirmation, because going to latest could break an application.
- * A new `--save` option that will updated module versions to your `package.json` file.
 
 ## Requests?
 
