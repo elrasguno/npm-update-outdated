@@ -49,9 +49,6 @@ function main(data)
 			process.exit(success);
 		}
 
-
-        updater.UpdateOutdated(outdated);
-
         updater.on('outdated_end', function()
         {
             updater.InstallMissing();
@@ -65,6 +62,8 @@ function main(data)
         {
             process.exit(1);
         });
+
+        updater.UpdateOutdated(outdated);
     }
     else
     {

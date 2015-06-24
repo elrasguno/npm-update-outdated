@@ -91,4 +91,46 @@ describe('Update Outdated Modules', function()
             .catch(done);
         });
     });
+
+	describe('test "--missing" flag', function()
+    {
+        it('should install surely@0.1.x if in the MISSING state', function(done)
+        {
+            this.timeout(5000);
+            var latest;
+            pExec('npm uninstall surely')
+			.then(pExec.bind(null, './bin/npm-update-outdated.js --missing'))
+			.then(pExec.bind(null, 'npm info surely versions'))
+            .then(function(resp)
+            {
+                // Filter versions
+                var versions;
+                try {
+                    versions = JSON.parse(resp[0].replace(/'/g, '"'));
+                    latest = versions.pop();
+                } catch (e) {
+                    console.error('error parsing versions', e.stack);
+                }
+                
+                return latest;
+            })
+            .then(function(latest)
+            {
+                pExec('npm info surely version')
+                .then(function(resp)
+                {
+                    var version;
+                    try {
+                        version = resp[0].replace(/\n/g, '');
+                    } catch (e) {
+                        console.error('error parsing version', e.stack);
+                    }
+                    assert.equal(latest, version);
+                    done();
+                })
+                .catch(done);
+            })
+            .catch(done);
+        });
+    });
 });
